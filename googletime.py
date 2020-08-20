@@ -20,7 +20,7 @@ def get_googletime(location):
          result = "Unknown input format \"{}\"".format(result)
       else:
          time_str = datetime.datetime.strptime(parts[1], "%I:%M %p").strftime("%H:%M")
-         result = "{}{}".format(time_str, parts[5])
+         result = "{}{}".format(time_str, parts[4])
    else:
       result = "Couldn't find time for \"{}\"".format(location)
    return result
