@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import urllib
+import datetime
 
 whitespace = re.compile(r"\s+")
 def get_googletime(location):
@@ -14,17 +15,12 @@ def get_googletime(location):
    if result.find('Time in ') > -1:
       # Tidy it up
       result = whitespace.sub(" ", result).strip().replace('Time in ', "")
-      parts = re.split('^(\d{1,2}):(\d{1,2}) ((a|p)m)(.*)', result)
-      if len(parts) != 7:
+      parts = re.split('^(\d{1,2}:\d{1,2} ((a|p)m))(.*)', result)
+      if len(parts) != 6:
          result = "Unknown input format \"{}\"".format(result)
       else:
-         hour = int(parts[1])
-         minute = parts[2]
-         tod = parts[3]
-         rest = parts[5]
-         if tod == 'pm':
-            hour = hour + 12
-         result = "{:02d}:{}{}".format(hour, minute, rest)
+         time_str = datetime.datetime.strptime(parts[1], "%I:%M %p").strftime("%H:%M")
+         result = "{}{}".format(time_str, parts[5])
    else:
       result = "Couldn't find time for \"{}\"".format(location)
    return result
@@ -45,7 +41,7 @@ else:
 
 if __name__ == '__main__':
    import sys
-   query = 'London'
+   query = 'Auckland'
    if len(sys.argv) > 1:
       query = ' '.join(sys.argv[1:])
    print('Looking up time for "{}"'.format(query))
