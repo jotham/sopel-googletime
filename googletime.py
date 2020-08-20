@@ -12,7 +12,19 @@ def get_googletime(location):
    soup = BeautifulSoup(response.text, 'html.parser')
    result = soup.find('h2').parent.find('div').get_text()
    if result.find('Time in ') > -1:
+      # Tidy it up
       result = whitespace.sub(" ", result).strip().replace('Time in ', "")
+      parts = re.split('^(\d{1,2}):(\d{1,2}) ((a|p)m)(.*)', result)
+      if len(parts) != 7:
+         result = "Unknown input format \"{}\"".format(result)
+      else:
+         hour = int(parts[1])
+         minute = parts[2]
+         tod = parts[3]
+         rest = parts[5]
+         if tod == 'pm':
+            hour = hour + 12
+         result = "{:02d}:{}{}".format(hour, minute, rest)
    else:
       result = "Couldn't find time for \"{}\"".format(location)
    return result
@@ -33,7 +45,7 @@ else:
 
 if __name__ == '__main__':
    import sys
-   query = 'alicetown, nz'
+   query = 'London'
    if len(sys.argv) > 1:
       query = ' '.join(sys.argv[1:])
    print('Looking up time for "{}"'.format(query))
