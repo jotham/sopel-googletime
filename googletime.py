@@ -36,7 +36,7 @@ else:
       """Look up the time at a location"""
       if trigger.group(2):
          result = get_googletime(trigger.group(2))
-      bot.say(result, trigger.sender, len(result)*2)
+         bot.say(result, trigger.sender, len(result)*2)
       return sopel.module.NOLIMIT
 
 if __name__ == '__main__':
